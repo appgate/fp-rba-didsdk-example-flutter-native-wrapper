@@ -199,7 +199,7 @@ At this point, the instructions to add the DID library to an existing project ru
 
 ## iOS
 
-Copy the required the `.xcframework` files at the following location:
+Once you have downloaded the folder `didsdk`, copy the required  `.xcframework` files at the following location:
 
 ![did_xcframeworks_ios.png](img/did_xcframeworks_ios.png)
 
