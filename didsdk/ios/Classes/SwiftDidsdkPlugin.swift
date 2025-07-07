@@ -3,7 +3,6 @@ import UIKit
 import didm_sdk
 import didm_core
 import appgate_sdk
-import appgate_core
 
 fileprivate enum DIDModulesNames: String {
     case didRegistrationWithUrl
@@ -79,8 +78,6 @@ public class SwiftDidsdkPlugin: NSObject, FlutterPlugin {
               let name = args[ArgumentsConstants.name] as? String,
               !name.isEmpty
         else { return }
-        // didInit has been DEPRECATED. But for 9.0.0 and previous versions is required to be called before setApplicationName to make it work.
-        (DetectID.sdk() as? DetectID)?.didInit()
         (DetectID.sdk() as? DetectID)?.setApplicationName(name)
     }
     
