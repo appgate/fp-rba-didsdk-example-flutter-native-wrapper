@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'didsdk'
-  s.version          = '9.0.0'
+  s.version          = '9.3.1'
   s.summary          = 'Appgate DID SDK'
   s.description      = <<-DESC
   DID SDK wrapper for Flutter
@@ -15,9 +15,9 @@ Pod::Spec.new do |s|
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
-  s.vendored_frameworks = 'Assets/appgate_core.xcframework', 'Assets/appgate_sdk.xcframework', 'Assets/didm_core.xcframework', 'Assets/didm_sdk.xcframework'
+  s.vendored_frameworks = 'Assets/appgate_sdk.xcframework', 'Assets/didm_core.xcframework', 'Assets/didm_sdk.xcframework'
   s.dependency 'Flutter'
-  s.platform = :ios, '11.0'
+  s.platform = :ios, '12.0'
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
