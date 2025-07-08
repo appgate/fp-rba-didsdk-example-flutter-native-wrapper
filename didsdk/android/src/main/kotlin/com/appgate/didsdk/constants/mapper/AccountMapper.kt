@@ -15,7 +15,6 @@ class AccountMapper {
             model.isActiveQRAuth,
             model.isActiveOTPAuth,
             model.isActivePushAlert,
-            model.isActiveVoiceAuth,
             model.isActiveFaceAuth
         )
     }

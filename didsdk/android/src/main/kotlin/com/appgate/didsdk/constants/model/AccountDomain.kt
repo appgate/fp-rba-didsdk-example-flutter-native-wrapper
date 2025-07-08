@@ -9,6 +9,5 @@ data class AccountDomain(
     val activeQRAuth: Boolean,
     val activeOTPAuth: Boolean,
     val activePushAlert: Boolean,
-    val activeVoiceAuth: Boolean,
     val activeFaceAuth: Boolean
 )
