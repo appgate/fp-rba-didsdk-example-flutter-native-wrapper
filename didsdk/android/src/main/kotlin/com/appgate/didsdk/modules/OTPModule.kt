@@ -26,7 +26,7 @@ class OTPModule(context: Context?) {
             return
         }
 
-        value.add(sdk.otpApi.getTokenValue(account))
+        value.add(sdk.getOtpApi().getTokenValue(account))
         result.success(value)
 
     }
@@ -42,7 +42,7 @@ class OTPModule(context: Context?) {
         }
 
         val value: MutableList<Int> = ArrayList(1)
-        value.add(sdk.otpApi.getTokenTimeStepValue(account))
+        value.add(sdk.getOtpApi().getTokenTimeStepValue(account))
         result.success(value)
     }
 

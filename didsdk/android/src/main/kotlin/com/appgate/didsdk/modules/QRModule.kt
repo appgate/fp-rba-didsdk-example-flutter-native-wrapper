@@ -27,7 +27,7 @@ class QRModule(context: Context?) {
             )
 
 
-        sdk.qrApi.setQRCodeScanTransactionListener {
+        sdk.getQrApi().setQRCodeScanTransactionListener {
             if (it != null) {
                 val value: MutableList<String> = ArrayList(1)
                 value.add(GsonUtil.toJson(TransactionInfoMapper().mapFromModelSDK(it)))
@@ -51,8 +51,8 @@ class QRModule(context: Context?) {
 
             }
         }
-        sdk.qrApi.setQRCodeTransactionServerResponseListener(listener)
-        sdk.qrApi.qrAuthenticationProcess(account, code)
+        sdk.getQrApi().setQRCodeTransactionServerResponseListener(listener)
+        sdk.getQrApi().qrAuthenticationProcess(account, code)
     }
 
     fun confirmOrDecline(confirm: Boolean, call: MethodCall, result: MethodChannel.Result) {
@@ -77,15 +77,15 @@ class QRModule(context: Context?) {
                 result.error(it, "", null)
             }
         }
-        sdk.qrApi.setQRCodeTransactionServerResponseListener(listener)
+        sdk.getQrApi().setQRCodeTransactionServerResponseListener(listener)
 
         when (confirm) {
             true -> {
-                sdk.qrApi.confirmQRCodeTransactionAction(transactionInfo)
+                sdk.getQrApi().confirmQRCodeTransactionAction(transactionInfo)
             }
 
             else -> {
-                sdk.qrApi.declineQRCodeTransactionAction(transactionInfo)
+                sdk.getQrApi().declineQRCodeTransactionAction(transactionInfo)
             }
         }
 

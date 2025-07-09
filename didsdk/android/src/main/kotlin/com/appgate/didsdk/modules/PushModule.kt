@@ -22,11 +22,11 @@ class PushModule(private val context: Context?, private val channel: MethodChann
         val pushTransactionViewProperties = sdk.pushTransactionViewPropertiesInstance
         pushTransactionViewProperties.enableNotificationQuickActions = false
         pushTransactionViewProperties.notificationIconResource = 0;
-        sdk.pushApi.setPushTransactionViewProperties(pushTransactionViewProperties)
+        sdk.getPushApi().setPushTransactionViewProperties(pushTransactionViewProperties)
     }
 
     fun setPushTransactionOpenListener(result: MethodChannel.Result) {
-        sdk.pushApi.setPushTransactionOpenListener {
+        sdk.getPushApi().setPushTransactionOpenListener {
             if (it != null) {
                 handler.post {
                     val value = mapOf(
@@ -64,15 +64,15 @@ class PushModule(private val context: Context?, private val channel: MethodChann
                 }
             }
         }
-        sdk.pushApi.setPushTransactionServerResponseListener(listener)
+        sdk.getPushApi().setPushTransactionServerResponseListener(listener)
 
         when (confirm) {
             true -> {
-                sdk.pushApi.confirmPushTransactionAction(transactionInfo)
+                sdk.getPushApi().confirmPushTransactionAction(transactionInfo)
             }
 
             else -> {
-                sdk.pushApi.declinePushTransactionAction(transactionInfo)
+                sdk.getPushApi().declinePushTransactionAction(transactionInfo)
             }
         }
 
@@ -89,13 +89,13 @@ class PushModule(private val context: Context?, private val channel: MethodChann
         val transactionInfoDomain: TransactionInfoDomain =
             GsonUtil.fromJson(transaction, TransactionInfoDomain::class.java)
         val transactionInfo = TransactionInfoMapper().mapToModelSDK(transactionInfoDomain)
-        sdk.pushApi.approvePushAlertAction(transactionInfo)
+        sdk.getPushApi().approvePushAlertAction(transactionInfo)
         result.success(listOf(""))
     }
 
     fun setPushAlertOpenListener(result: MethodChannel.Result) {
         result.success(listOf(""))
-        sdk.pushApi.setPushAlertOpenListener {
+        sdk.getPushApi().setPushAlertOpenListener {
             if (it != null) {
                 val value = mapOf(
                     ArgumentsConstants.TRANSACTION.value to GsonUtil.toJson(
