@@ -23,7 +23,6 @@ import com.appgate.didsdk.constants.DIDModulesNames.DID_REGISTRATION_WITH_URL
 import com.appgate.didsdk.constants.DIDModulesNames.EXIST_ACCOUNTS
 import com.appgate.didsdk.constants.DIDModulesNames.GET_ACCOUNTS
 import com.appgate.didsdk.constants.DIDModulesNames.GET_CHALLENGE_QUESTION_OTP
-import com.appgate.didsdk.constants.DIDModulesNames.GET_DEVICE_ID
 import com.appgate.didsdk.constants.DIDModulesNames.GET_MASKED_APP_INSTANCE_ID
 import com.appgate.didsdk.constants.DIDModulesNames.GET_MOBILE_ID
 import com.appgate.didsdk.constants.DIDModulesNames.GET_TOKEN_TIME_STEP_VALUE
@@ -161,10 +160,6 @@ class DidsdkPlugin : MethodCallHandler, NewIntentListener, FlutterPlugin, Activi
                 accountsModule.updateGlobalConfig(call, result)
             }
 
-            GET_DEVICE_ID.value -> {
-                getDeviceID(result)
-            }
-
             GET_MASKED_APP_INSTANCE_ID.value -> {
                 getMaskedAppInstanceID(result)
             }
@@ -261,12 +256,6 @@ class DidsdkPlugin : MethodCallHandler, NewIntentListener, FlutterPlugin, Activi
 
     }
 
-    private fun getDeviceID(result: Result) {
-        val value: MutableList<String> = ArrayList(1)
-        value.add(DetectID.sdk(context).deviceID)
-        result.success(value)
-    }
-
     private fun getMaskedAppInstanceID(result: Result) {
         val value: MutableList<String> = ArrayList(1)
         value.add(DetectID.sdk(context).maskedAppInstanceID)
@@ -282,7 +271,6 @@ class DidsdkPlugin : MethodCallHandler, NewIntentListener, FlutterPlugin, Activi
     private fun initDID() {
         this.sdk = DetectID.sdk(context)
     }
-
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         registerChannel.setMethodCallHandler(null)
@@ -316,6 +304,5 @@ class DidsdkPlugin : MethodCallHandler, NewIntentListener, FlutterPlugin, Activi
         private var TAG = DidsdkPlugin::class.java.simpleName
 
     }
-
 
 }
