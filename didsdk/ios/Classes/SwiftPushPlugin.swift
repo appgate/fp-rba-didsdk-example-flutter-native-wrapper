@@ -88,16 +88,24 @@ public class SwiftPushPlugin: NSObject, FlutterPlugin {
         if confirm {
             (DetectID.sdk() as? DetectID)?.getPushApi()
             .confirmPushTransactionAction(transaction, onSuccess: {
-                result([""])
+                DispatchQueue.main.async(execute: {
+                    result([""])
+                })
             }, onFailure: { error in
-                result(FlutterError.init(code: "\(error.code)", message: error.description, details: nil))
+                DispatchQueue.main.async(execute: {
+                    result(FlutterError.init(code: "\(error.code)", message: error.description, details: nil))
+                })
             })
         } else {
             (DetectID.sdk() as? DetectID)?.getPushApi()
             .declinePushTransactionAction(transaction, onSuccess: {
-                result([""])
+                DispatchQueue.main.async(execute: {
+                    result([""])
+                })
             }, onFailure: { error in
-                result(FlutterError.init(code: "\(error.code)", message: error.description, details: nil))
+                DispatchQueue.main.async(execute: {
+                    result(FlutterError.init(code: "\(error.code)", message: error.description, details: nil))
+                })
             })
         }
     }

@@ -51,9 +51,13 @@ public class SwiftDidsdkPlugin: NSObject, FlutterPlugin {
             return
         }
         (DetectID.sdk() as? DetectID)?.didRegistration(withUrl: url as String, onSuccess: {
-            result([""])
+            DispatchQueue.main.async(execute: {
+                result([""])
+            })
         }, onFailure: { error in
-            result(FlutterError.init(code: "\(error.code)", message: error.description, details: nil))
+            DispatchQueue.main.async(execute: {
+                result(FlutterError.init(code: "\(error.code)", message: error.description, details: nil))
+            })
         })
     }
     
@@ -67,9 +71,13 @@ public class SwiftDidsdkPlugin: NSObject, FlutterPlugin {
             return
         }
         (DetectID.sdk() as? DetectID)?.didRegistration(byQRCode: code, fromUrl: url, onSuccess: {
-            result([""])
+            DispatchQueue.main.async(execute: {
+                result([""])
+            })
         }, onFailure: { error in
-            result(FlutterError.init(code: "\(error.code)", message: error.description, details: nil))
+            DispatchQueue.main.async(execute: {
+                result(FlutterError.init(code: "\(error.code)", message: error.description, details: nil))
+            })
         })
     }
     
