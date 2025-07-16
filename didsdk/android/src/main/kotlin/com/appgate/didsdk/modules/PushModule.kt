@@ -3,9 +3,12 @@ package com.appgate.didsdk.modules
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import com.appgate.appgate_sdk.data.utils.GsonUtil
+import com.appgate.appgate_sdk.encryptor.exceptions.SDKException
 import com.appgate.didm_auth.DetectID
-import com.appgate.didm_auth.push_auth.transaction.listener.PushTransactionServerResponseListener
+import com.appgate.didm_auth.common.handler.TransactionResultHandler
+import com.appgate.didsdk.DidsdkPlugin
 import com.appgate.didsdk.constants.ArgumentsConstants
 import com.appgate.didsdk.constants.SDKErrors
 import com.appgate.didsdk.constants.mapper.TransactionInfoMapper
@@ -54,29 +57,34 @@ class PushModule(private val context: Context?, private val channel: MethodChann
             GsonUtil.fromJson(transaction, TransactionInfoDomain::class.java)
         val transactionInfo = TransactionInfoMapper().mapToModelSDK(transactionInfoDomain)
 
-        val listener = PushTransactionServerResponseListener {
-            if (it != null) {
-                handler.post {
-                    val value = mapOf(
-                        ArgumentsConstants.CODE.value to it
-                    )
-                    channel.invokeMethod(SERVER_RESPONSE, value)
-                }
+        val transactionResultHandler = object : TransactionResultHandler {
+            override fun onSuccess() {
+                Log.d(TAG, "onSuccess()")
+                val value: MutableList<String> = ArrayList(1)
+                value.add("")
+                result.success(value)
+            }
+
+            override fun onFailure(exception: SDKException) {
+                Log.e(TAG, "onFailure: ", exception)
+                result.error("${exception.code}", exception.message, exception.localizedMessage)
             }
         }
-        sdk.getPushApi().setPushTransactionServerResponseListener(listener)
 
         when (confirm) {
             true -> {
-                sdk.getPushApi().confirmPushTransactionAction(transactionInfo)
+                sdk.pushApi.confirmPushTransactionAction(
+                    transactionInfo,
+                    transactionResultHandler
+                )
             }
-
             else -> {
-                sdk.getPushApi().declinePushTransactionAction(transactionInfo)
+                sdk.pushApi.declinePushTransactionAction(
+                    transactionInfo,
+                    transactionResultHandler
+                )
             }
         }
-
-        result.success(listOf(""))
     }
 
     fun approvePush(call: MethodCall, result: MethodChannel.Result) {
@@ -89,13 +97,13 @@ class PushModule(private val context: Context?, private val channel: MethodChann
         val transactionInfoDomain: TransactionInfoDomain =
             GsonUtil.fromJson(transaction, TransactionInfoDomain::class.java)
         val transactionInfo = TransactionInfoMapper().mapToModelSDK(transactionInfoDomain)
-        sdk.getPushApi().approvePushAlertAction(transactionInfo)
+        sdk.pushApi.approvePushAlertAction(transactionInfo)
         result.success(listOf(""))
     }
 
     fun setPushAlertOpenListener(result: MethodChannel.Result) {
         result.success(listOf(""))
-        sdk.getPushApi().setPushAlertOpenListener {
+        sdk.pushApi.setPushAlertOpenListener {
             if (it != null) {
                 val value = mapOf(
                     ArgumentsConstants.TRANSACTION.value to GsonUtil.toJson(
@@ -108,6 +116,7 @@ class PushModule(private val context: Context?, private val channel: MethodChann
     }
 
     companion object {
+        private var TAG = DidsdkPlugin::class.java.simpleName
         const val PUSH_ALERT = "push_alert"
         const val SERVER_RESPONSE = "server_response"
         const val PUSH_TRANSACTION = "push_transaction"

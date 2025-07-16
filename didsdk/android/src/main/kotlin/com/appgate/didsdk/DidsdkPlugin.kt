@@ -302,7 +302,6 @@ class DidsdkPlugin : MethodCallHandler, NewIntentListener, FlutterPlugin, Activi
 
     companion object {
         private var TAG = DidsdkPlugin::class.java.simpleName
-
     }
 
 }
