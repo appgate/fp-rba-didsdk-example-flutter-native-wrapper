@@ -66,12 +66,10 @@ public class SwiftPushPlugin: NSObject, FlutterPlugin {
             finishPayloadSubscription()
             break
         case SwiftPushMethods.confirmPushTransactionAction.rawValue:
-            confirmOrDecline(true, call)
-            result([""])
+            confirmOrDecline(true, call, result)
             break
         case SwiftPushMethods.declinePushTransactionAction.rawValue:
-            confirmOrDecline(false, call)
-            result([""])
+            confirmOrDecline(false, call, result)
             break
         case SwiftPushMethods.approvePushAlertAction.rawValue:
             approveAlert(call)
@@ -82,15 +80,25 @@ public class SwiftPushPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    private func confirmOrDecline(_ confirm: Bool, _ call: FlutterMethodCall) {
+    private func confirmOrDecline(_ confirm: Bool, _ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let args = ArgumentsHelper.parseParams(call),
               let transactionJson = args[ArgumentsConstants.transaction] as? String,
               let transaction = getTransactionInfo(transactionJson)
         else { return }
         if confirm {
-            (DetectID.sdk() as? DetectID)?.getPushApi().confirmPushTransactionAction(transaction)
+            (DetectID.sdk() as? DetectID)?.getPushApi()
+            .confirmPushTransactionAction(transaction, onSuccess: {
+                result([""])
+            }, onFailure: { error in
+                result(FlutterError.init(code: "\(error.code)", message: error.description, details: nil))
+            })
         } else {
-            (DetectID.sdk() as? DetectID)?.getPushApi().declinePushTransactionAction(transaction)
+            (DetectID.sdk() as? DetectID)?.getPushApi()
+            .declinePushTransactionAction(transaction, onSuccess: {
+                result([""])
+            }, onFailure: { error in
+                result(FlutterError.init(code: "\(error.code)", message: error.description, details: nil))
+            })
         }
     }
     
