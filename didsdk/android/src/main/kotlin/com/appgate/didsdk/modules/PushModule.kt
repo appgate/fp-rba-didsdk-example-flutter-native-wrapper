@@ -25,11 +25,11 @@ class PushModule(private val context: Context?, private val channel: MethodChann
         val pushTransactionViewProperties = sdk.pushTransactionViewPropertiesInstance
         pushTransactionViewProperties.enableNotificationQuickActions = false
         pushTransactionViewProperties.notificationIconResource = 0;
-        sdk.getPushApi().setPushTransactionViewProperties(pushTransactionViewProperties)
+        sdk.pushApi.setPushTransactionViewProperties(pushTransactionViewProperties)
     }
 
     fun setPushTransactionOpenListener(result: MethodChannel.Result) {
-        sdk.getPushApi().setPushTransactionOpenListener {
+        sdk.pushApi.setPushTransactionOpenListener {
             if (it != null) {
                 handler.post {
                     val value = mapOf(
