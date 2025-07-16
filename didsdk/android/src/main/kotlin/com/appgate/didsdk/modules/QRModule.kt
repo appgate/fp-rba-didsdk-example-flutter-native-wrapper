@@ -1,10 +1,13 @@
 package com.appgate.didsdk.modules
 
 import android.content.Context
+import android.util.Log
 import com.appgate.appgate_sdk.data.utils.GsonUtil
+import com.appgate.appgate_sdk.encryptor.exceptions.SDKException
 import com.appgate.didm_auth.DetectID
 import com.appgate.didm_auth.common.account.entities.Account
-import com.appgate.didm_auth.qr.listener.QRCodeTransactionServerResponseListener
+import com.appgate.didm_auth.common.handler.TransactionResultHandler
+import com.appgate.didsdk.DidsdkPlugin
 import com.appgate.didsdk.constants.ArgumentsConstants
 import com.appgate.didsdk.constants.SDKErrors
 import com.appgate.didsdk.constants.mapper.TransactionInfoMapper
@@ -68,31 +71,38 @@ class QRModule(context: Context?) {
             GsonUtil.fromJson(transaction, TransactionInfoDomain::class.java)
         val transactionInfo = TransactionInfoMapper().mapToModelSDK(transactionInfoDomain)
 
-        val listener = QRCodeTransactionServerResponseListener {
-            if (it == CODE_SUCCESSFUL) {
+        val transactionResultHandler = object : TransactionResultHandler {
+            override fun onSuccess() {
+                Log.d(TAG, "onSuccess()")
                 val value: MutableList<String> = ArrayList(1)
                 value.add("")
                 result.success(value)
-            } else {
-                result.error(it, "", null)
+            }
+
+            override fun onFailure(exception: SDKException) {
+                Log.e(TAG, "onFailure: ", exception)
+                result.error("${exception.code}", exception.message, exception.localizedMessage)
             }
         }
-        sdk.getQrApi().setQRCodeTransactionServerResponseListener(listener)
 
         when (confirm) {
             true -> {
-                sdk.getQrApi().confirmQRCodeTransactionAction(transactionInfo)
+                sdk.qrApi.confirmQRCodeTransactionAction(
+                    transactionInfo,
+                    transactionResultHandler
+                )
             }
-
             else -> {
-                sdk.getQrApi().declineQRCodeTransactionAction(transactionInfo)
+                sdk.qrApi.declineQRCodeTransactionAction(
+                    transactionInfo,
+                    transactionResultHandler
+                )
             }
         }
-
-
     }
 
     companion object {
+        private var TAG = DidsdkPlugin::class.java.simpleName
         const val CODE_SUCCESSFUL = "1020"
     }
 }
