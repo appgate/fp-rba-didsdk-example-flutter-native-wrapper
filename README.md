@@ -276,7 +276,7 @@ apply plugin: 'kotlin-kapt'
 
 In your app go to android/app/build.gradle and dependencies block add this line:
 
-```
+```groovy
 implementation fileTree(include: ['*.aar'], dir: 'libs')
 
 implementation 'com.google.dagger:dagger:2.45'
@@ -287,13 +287,31 @@ kapt 'com.google.dagger:dagger-android-processor:2.45'
 implementation "androidx.security:security-crypto:1.0.0"
 ```
 
+```kotlin
+implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
+
+implementation("com.google.dagger:dagger:2.48.1")
+implementation("com.google.dagger:dagger-android-support:2.45")
+kapt("com.google.dagger:dagger-compiler:2.45")
+kapt("com.google.dagger:dagger-android-processor:2.45")
+
+implementation("androidx.security:security-crypto:1.0.0")
+```
+
 In order to use the DID libraries it is required to change the minimum version of the DID libraries, Change minSdkVersion to 23 in you android/app/build.gradle:
 
-```
- defaultConfig {       
+```groovy
+ defaultConfig {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 23
+        ...
+    }
+```
+
+```kotlin
+ defaultConfig {
+        minSdk 23
         ...
     }
 ```
@@ -859,7 +877,7 @@ Go to `yourapp/android/app/kotlin or java/yourpackage/MainActivity` and change t
 
 From:
 
-```Kotlin
+```kotlin
 import io.flutter.embedding.android.FlutterActivity
         
 class MainActivity: FlutterActivity() {}
@@ -867,7 +885,7 @@ class MainActivity: FlutterActivity() {}
 
 To:
 
-```Kotlin
+```kotlin
 import com.appgate.didsdk.DIDMainActivity
 
 class MainActivity : DIDMainActivity() {}
@@ -877,10 +895,23 @@ class MainActivity : DIDMainActivity() {}
 
 In your app go to android/build.gradle
 
-```
-  dependencies {
+```groovy
+    dependencies {
         classpath 'com.google.gms:google-services:4.3.15'
-  }
+    }
+```
+
+```kotlin
+buildscript {
+    repositories {
+        ...
+        google()
+    }
+    dependencies {
+        ...
+        classpath("com.google.gms:google-services:4.4.0")
+    }
+}
 ```
 
 In your app go to android/app/build.gradle and initial block add this line:
@@ -893,8 +924,12 @@ apply plugin: 'com.google.gms.google-services'
 
 Then, in your dependencies block to build.gradle add this line:
 
+```groovy
+implementation 'com.google.firebase:firebase-messaging:24.0.0'
 ```
-implementation 'com.google.firebase:firebase-messaging:23.1.2'
+
+```kotlin
+implementation("com.google.firebase:firebase-messaging:24.0.0")
 ```
 
 Add your google-service.json to android/app/
@@ -903,7 +938,7 @@ Add your google-service.json to android/app/
 
 Create a service class that extends FirebaseMessagingService  and override the following methods:
 
-``` kotlin
+```kotlin
 import com.appgate.appgate_sdk.data.device.provider.PushNotificationProvider
 import com.appgate.didsdk.DIDFCMService
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -940,7 +975,7 @@ in your app go to AndroidManifest.xml declare you service firebase, here is an e
 
 Add to your MainActivity to override the getTokenFirebase method to update the token on application startup.
 
-```Kotlin
+```kotlin
 import android.text.TextUtils
 import com.appgate.appgate_sdk.data.device.provider.PushNotificationProvider
 import com.appgate.didm_auth.DetectID
@@ -976,7 +1011,7 @@ Configure the Maven address of and build dependencies for the AppGallery Connect
 In your app go to android/build.gradle
 
 ![img.png](img/push3.png)
-```
+```groovy
 allprojects {
     repositories {
             // Add the Maven address.
@@ -991,7 +1026,22 @@ buildscript{
     }
     dependencies {
         // Add dependencies.
-        classpath 'com.huawei.agconnect:agcp:1.5.2.300'
+        classpath 'com.huawei.agconnect:agcp:1.9.1.300'
+    }
+}
+```
+
+```kotlin
+buildscript {
+    repositories {
+        ...
+        maven {
+            url = uri("https://developer.huawei.com/repo/")
+        }
+    }
+    dependencies {
+        ...
+        classpath("com.huawei.agconnect:agcp:1.9.1.300")
     }
 }
 ```
@@ -1000,14 +1050,29 @@ Then go to android/app/build.gradle and initial block add this line:
 
 ![android2.png](img/android2.png)
 
-```
+```groovy
 apply plugin: 'com.huawei.agconnect'
+```
+
+```kotlin
+plugins {
+    id("com.huawei.agconnect")
+}
 ```
 
 In your dependencies block to build.gradle add this line:
 
-```
+```groovy
+implementation 'com.huawei.hms:push:6.3.0.304'
 implementation 'com.huawei.agconnect:agconnect-core:1.5.2.300'
+```
+
+```kotlin
+dependencies {
+    ...
+    implementation("com.huawei.hms:push:6.3.0.304")
+    implementation("com.huawei.agconnect:agconnect-core:1.5.2.300")
+}
 ```
 
 Add your agconnect-services.json to android/app/
@@ -1016,7 +1081,7 @@ Add your agconnect-services.json to android/app/
 
 You can create a service class that extends HmsMessageService  and override the following methods:
 
-``` kotlin
+```kotlin
 import com.appgate.appgate_sdk.data.device.provider.PushNotificationProvider
 import com.appgate.didsdk.DIDFCMService
 import com.huawei.hms.push.HmsMessageService
@@ -1051,7 +1116,7 @@ Then in your app go to AndroidManifest.xml declare you service firebase, here is
 ```
 Add to your MainActivity to override the getTokenHMS method to update the token on application startup.
 
-```Kotlin
+```kotlin
 
 import android.text.TextUtils
 import android.util.Log
