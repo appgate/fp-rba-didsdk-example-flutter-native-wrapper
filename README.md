@@ -9,10 +9,14 @@
 ## Table Of Contents
 
 * [Disclaimer](#disclaimer)
-* [Technical Information](#tech-desc)
 * [Description](#description)
+* [Technical Information](#technical-information)
 * [DID-SDK Integration](#did-sdk-integration)
   * [Preliminary Steps](#preliminary-steps)
+  * [Software versions used to develop the library](#software-versions-used-to-develop-the-library)
+    * [Flutter](#hybrid-environment)
+    * [iOS](#ios)
+    * [Android](#android)
 * [Set-up the library](#set-up-the-library)
   * [iOS](#ios)
     * [Install Cocoapods](#install-cocoapods)
@@ -134,44 +138,44 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-<a name="desc"></a>
 # Description
 This repository is meant to help you understand the implementation of the native libraries of DID-SDK using Flutter. This repository reviews the initialization of the SDK, account registration processes and authentication services.
 
-<a name="tech-desc"></a>
 # Technical Information
 The native libraries of DetectID-SDK have the following specifications:
 
 ## DetectID Mobile SDK version
-- iOS: 9.0.0
+- iOS: 9.3.1
     - didm_sdk.xcframework
     - didm_core.xcframework
     - appgate_sdk.xcframework
-    - appgate_core.xcframework
 
-- Android: 9.0.1
-    - didm_sdk-9.0.1.aar
-    - appgate_sdk-2.0.0.aar
+- Android: 9.3.1
+    - didm_sdk-9.3.1.aar
+    - appgate_sdk-2.2.1.aar
 
-## iOS
+## Software versions used to develop the library
+
+### Hybrid environment
+
+- Flutter >= 3.32.5
+- Dart >= 3.8.1
+- DevTools 2.45.1
+
+### iOS
 
  - Base SDK compiled: iOS 16.4.
- - Xcode: 14.3 (14E222b).
- - OS versions compatibility: From 11 to 16.
- - Programing Language: Swift 5.8.
+ - Version 16.3 (16E140).
+ - OS versions compatibility: From 12 to 18.
+ - Programing Language: Swift 6.1.
 
-## Android
+### Android
 
- - API level SDK compiled: 31.
- - API level version compatibility: From 23 (Android 6 - Marshmallow) to 33 (Android 13).
+ - API level SDK compiled: 34.
+ - API level version compatibility: From 23 (Android 6 - Marshmallow) to 35 (Android 15).
  - Programing Language: Kotlin.
  - Dependency: Gson, Dagger 2, Firebase and androidx.security.
- - Android Studio: Flamingo | 2022.2.1.
-
-## Hybrid environment
-
-- Flutter >= 3.10.5
-- Dart >= 3.0.5
+ - Android Studio Narwhal | 2025.1.1
 
 # DID-SDK Integration
 
@@ -1023,8 +1027,8 @@ __groovy__
 ```groovy
 allprojects {
     repositories {
-            // Add the Maven address.
-            maven {url 'https://developer.huawei.com/repo/'}
+        // Add the Maven address.
+        maven {url 'https://developer.huawei.com/repo/'}
     }
 }
 ...
