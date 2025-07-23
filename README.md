@@ -153,7 +153,7 @@ The native libraries of DetectID-SDK have the following specifications:
 
 - Android: 9.3.1
     - didm_sdk-9.3.1.aar
-    - appgate_sdk-2.2.1.aar
+    - appgate_sdk-2.2.2.aar
 
 ## Software versions used to develop the library
 
