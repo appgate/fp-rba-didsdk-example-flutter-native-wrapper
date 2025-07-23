@@ -25,6 +25,7 @@
   * [Android](#android)
     * [Copy aar to folders](#copy-aar-to-folders)
     * [Modify build.gradle](#modify-buildgradle)
+    * [Add Proguard Rules](#add-proguard-rules)
     * [Troubleshooting](#troubleshooting-android)
 * [Implementing the DID package](#implementing-the-did-package)
 * [Implementation](#implementation)
@@ -323,6 +324,44 @@ __kotlin__
         ...
     }
 ```
+
+### Add Proguard Rules
+
+ProGuard optimizes, shrinks, and obfuscates Android app code. It removes unused classes, methods, and attributes, then shortens names to make reverse engineering harder—especially for apps with sensitive features like license checks. To ensure compatibility with the DetectID is required to add the following rules to `proguard-rules.pro` file.
+
+```
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepattributes Exceptions
+-keepattributes InnerClasses
+-keepattributes SourceFile,LineNumberTable
+
+-dontwarn sun.misc.**
+
+-keep class * extends com.google.gson.TypeAdapter
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
+
+-keepclassmembers,allowobfuscation class * {
+  @com.google.gson.annotations.SerializedName <fields>;
+}
+-keep,allowobfuscation,allowshrinking class com.google.gson.reflect.TypeToken
+-keep,allowobfuscation,allowshrinking class * extends com.google.gson.reflect.TypeToken
+
+-keep class com.appgate.** {
+    @com.google.gson.annotations.SerializedName <fields>;
+   <init>();
+}
+-keep class com.appgate.appgate_sdk.data.device.repository.SdkContainer {
+    <fields>;
+}
+-keep class com.appgate.didsdk.constants.model.** { *; }
+-keepclassmembers class com.appgate.didsdk.constants.model.** { *; }
+-keepnames class com.appgate.didsdk.constants.model.** { *; }
+-keepclassmembernames class com.appgate.didsdk.constants.model.** { *; }
+```
+
 <a name="troubleshooting-android"></a>
 ### Troubleshooting
 
