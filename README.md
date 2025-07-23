@@ -276,6 +276,7 @@ apply plugin: 'kotlin-kapt'
 
 In your app go to android/app/build.gradle and dependencies block add this line:
 
+__groovy__
 ```groovy
 implementation fileTree(include: ['*.aar'], dir: 'libs')
 
@@ -287,6 +288,7 @@ kapt 'com.google.dagger:dagger-android-processor:2.45'
 implementation "androidx.security:security-crypto:1.0.0"
 ```
 
+__kotlin__
 ```kotlin
 implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
 
@@ -300,6 +302,7 @@ implementation("androidx.security:security-crypto:1.0.0")
 
 In order to use the DID libraries it is required to change the minimum version of the DID libraries, Change minSdkVersion to 23 in you android/app/build.gradle:
 
+__groovy__
 ```groovy
  defaultConfig {
         // You can update the following values to match your application needs.
@@ -309,6 +312,7 @@ In order to use the DID libraries it is required to change the minimum version o
     }
 ```
 
+__kotlin__
 ```kotlin
  defaultConfig {
         minSdk 23
@@ -895,12 +899,14 @@ class MainActivity : DIDMainActivity() {}
 
 In your app go to android/build.gradle
 
+__groovy__
 ```groovy
     dependencies {
         classpath 'com.google.gms:google-services:4.3.15'
     }
 ```
 
+__kotlin__
 ```kotlin
 buildscript {
     repositories {
@@ -924,10 +930,12 @@ apply plugin: 'com.google.gms.google-services'
 
 Then, in your dependencies block to build.gradle add this line:
 
+__groovy__
 ```groovy
 implementation 'com.google.firebase:firebase-messaging:24.0.0'
 ```
 
+__kotlin__
 ```kotlin
 implementation("com.google.firebase:firebase-messaging:24.0.0")
 ```
@@ -1011,6 +1019,7 @@ Configure the Maven address of and build dependencies for the AppGallery Connect
 In your app go to android/build.gradle
 
 ![img.png](img/push3.png)
+__groovy__
 ```groovy
 allprojects {
     repositories {
@@ -1031,6 +1040,7 @@ buildscript{
 }
 ```
 
+__kotlin__
 ```kotlin
 buildscript {
     repositories {
@@ -1050,10 +1060,12 @@ Then go to android/app/build.gradle and initial block add this line:
 
 ![android2.png](img/android2.png)
 
+__groovy__
 ```groovy
 apply plugin: 'com.huawei.agconnect'
 ```
 
+__kotlin__
 ```kotlin
 plugins {
     id("com.huawei.agconnect")
@@ -1062,11 +1074,13 @@ plugins {
 
 In your dependencies block to build.gradle add this line:
 
+__groovy__
 ```groovy
 implementation 'com.huawei.hms:push:6.3.0.304'
 implementation 'com.huawei.agconnect:agconnect-core:1.5.2.300'
 ```
 
+__kotlin__
 ```kotlin
 dependencies {
     ...
