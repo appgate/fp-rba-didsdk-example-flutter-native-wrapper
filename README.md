@@ -165,8 +165,8 @@ The native libraries of DetectID-SDK have the following specifications:
 
 ### iOS
 
- - Base SDK compiled: iOS 16.4.
- - Version 16.3 (16E140).
+ - Base SDK compiled: iOS 18.4.
+ - Xcode 16.3 (16E140).
  - OS versions compatibility: From 12 to 18.
  - Programing Language: Swift 6.1.
 
