@@ -285,10 +285,10 @@ __groovy__
 ```groovy
 implementation fileTree(include: ['*.aar'], dir: 'libs')
 
-implementation 'com.google.dagger:dagger:2.45'
-implementation 'com.google.dagger:dagger-android-support:2.45'
-kapt 'com.google.dagger:dagger-compiler:2.45'
-kapt 'com.google.dagger:dagger-android-processor:2.45'
+implementation 'com.google.dagger:dagger:2.49'
+implementation 'com.google.dagger:dagger-android-support:2.49'
+kapt 'com.google.dagger:dagger-compiler:2.49'
+kapt 'com.google.dagger:dagger-android-processor:2.49'
 
 implementation "androidx.security:security-crypto:1.0.0"
 ```
@@ -298,9 +298,9 @@ __kotlin__
 implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
 
 implementation("com.google.dagger:dagger:2.48.1")
-implementation("com.google.dagger:dagger-android-support:2.45")
-kapt("com.google.dagger:dagger-compiler:2.45")
-kapt("com.google.dagger:dagger-android-processor:2.45")
+implementation("com.google.dagger:dagger-android-support:2.49")
+kapt("com.google.dagger:dagger-compiler:2.49")
+kapt("com.google.dagger:dagger-android-processor:2.49")
 
 implementation("androidx.security:security-crypto:1.0.0")
 ```
