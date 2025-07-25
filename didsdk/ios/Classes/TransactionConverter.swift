@@ -26,7 +26,7 @@ class TransactionConverter {
     
     static func toJSON(with transaction: TransactionInfo) -> String? {
         let json: [String: Any] = [
-            TransactionInfoKeys.account.rawValue: SwiftAccountsModule.converDIDAccountToJson(account: transaction.account) as Any,
+            TransactionInfoKeys.account.rawValue: TransactionConverter.getAccount(from: transaction) as Any,
             TransactionInfoKeys.transactionID.rawValue: transaction.transactionID as Any,
             TransactionInfoKeys.type.rawValue: transaction.type.toName() as Any,
             TransactionInfoKeys.status.rawValue: transaction.status.toName() as Any,
@@ -44,6 +44,11 @@ class TransactionConverter {
         } catch {
             return nil
         }
+    }
+    
+    private static func getAccount(from transaction: TransactionInfo) -> [String: Any]? {
+        guard let account = transaction.account else { return nil }
+        return SwiftAccountsModule.converDIDAccountToJson(account: account)
     }
 }
 

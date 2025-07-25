@@ -61,7 +61,7 @@ public class SwiftAccountsModule: NSObject, FlutterPlugin {
     }
     
     private func existAccounts(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        result([(DetectID.sdk() as? DetectID)?.existAccounts() ?? false])
+        result([((DetectID.sdk() as? DetectID)?.getAccounts().isEmpty == false)])
     }
     
     private func getAccounts(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {

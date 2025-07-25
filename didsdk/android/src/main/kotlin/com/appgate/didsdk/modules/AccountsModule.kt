@@ -16,7 +16,7 @@ class AccountsModule(context: Context?) {
 
     fun existAccounts(result: MethodChannel.Result) {
         val value: MutableList<Boolean> = ArrayList(1)
-        value.add(sdk.existAccounts())
+        value.add(sdk.accounts.isNotEmpty())
         result.success(value)
     }
 

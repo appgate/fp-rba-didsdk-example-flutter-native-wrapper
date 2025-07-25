@@ -9,10 +9,14 @@
 ## Table Of Contents
 
 * [Disclaimer](#disclaimer)
-* [Technical Information](#tech-desc)
 * [Description](#description)
+* [Technical Information](#technical-information)
 * [DID-SDK Integration](#did-sdk-integration)
   * [Preliminary Steps](#preliminary-steps)
+  * [Software versions used to develop the library](#software-versions-used-to-develop-the-library)
+    * [Flutter](#hybrid-environment)
+    * [iOS](#ios)
+    * [Android](#android)
 * [Set-up the library](#set-up-the-library)
   * [iOS](#ios)
     * [Install Cocoapods](#install-cocoapods)
@@ -21,6 +25,7 @@
   * [Android](#android)
     * [Copy aar to folders](#copy-aar-to-folders)
     * [Modify build.gradle](#modify-buildgradle)
+    * [Add Proguard Rules](#add-proguard-rules)
     * [Troubleshooting](#troubleshooting-android)
 * [Implementing the DID package](#implementing-the-did-package)
 * [Implementation](#implementation)
@@ -134,44 +139,44 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-<a name="desc"></a>
 # Description
 This repository is meant to help you understand the implementation of the native libraries of DID-SDK using Flutter. This repository reviews the initialization of the SDK, account registration processes and authentication services.
 
-<a name="tech-desc"></a>
 # Technical Information
 The native libraries of DetectID-SDK have the following specifications:
 
 ## DetectID Mobile SDK version
-- iOS: 9.0.0
+- iOS: 9.3.1
     - didm_sdk.xcframework
     - didm_core.xcframework
     - appgate_sdk.xcframework
-    - appgate_core.xcframework
 
-- Android: 9.0.1
-    - didm_sdk-9.0.1.aar
-    - appgate_sdk-2.0.0.aar
+- Android: 9.3.1
+    - didm_sdk-9.3.1.aar
+    - appgate_sdk-2.2.2.aar
 
-## iOS
+## Software versions used to develop the library
 
- - Base SDK compiled: iOS 16.4.
- - Xcode: 14.3 (14E222b).
- - OS versions compatibility: From 11 to 16.
- - Programing Language: Swift 5.8.
+### Hybrid environment
 
-## Android
+- Flutter >= 3.32.5
+- Dart >= 3.8.1
+- DevTools 2.45.1
 
- - API level SDK compiled: 31.
- - API level version compatibility: From 23 (Android 6 - Marshmallow) to 33 (Android 13).
+### iOS
+
+ - Base SDK compiled: iOS 18.4.
+ - Xcode 16.3 (16E140).
+ - OS versions compatibility: From 12 to 18.
+ - Programing Language: Swift 6.1.
+
+### Android
+
+ - API level SDK compiled: 34.
+ - API level version compatibility: From 23 (Android 6 - Marshmallow) to 35 (Android 15).
  - Programing Language: Kotlin.
  - Dependency: Gson, Dagger 2, Firebase and androidx.security.
- - Android Studio: Flamingo | 2022.2.1.
-
-## Hybrid environment
-
-- Flutter >= 3.10.5
-- Dart >= 3.0.5
+ - Android Studio Narwhal | 2025.1.1
 
 # DID-SDK Integration
 
@@ -276,27 +281,87 @@ apply plugin: 'kotlin-kapt'
 
 In your app go to android/app/build.gradle and dependencies block add this line:
 
-```
+__groovy__
+```groovy
 implementation fileTree(include: ['*.aar'], dir: 'libs')
 
-implementation 'com.google.dagger:dagger:2.45'
-implementation 'com.google.dagger:dagger-android-support:2.45'
-kapt 'com.google.dagger:dagger-compiler:2.45'
-kapt 'com.google.dagger:dagger-android-processor:2.45'
+implementation 'com.google.dagger:dagger:2.49'
+implementation 'com.google.dagger:dagger-android-support:2.49'
+kapt 'com.google.dagger:dagger-compiler:2.49'
+kapt 'com.google.dagger:dagger-android-processor:2.49'
 
 implementation "androidx.security:security-crypto:1.0.0"
 ```
 
+__kotlin__
+```kotlin
+implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
+
+implementation("com.google.dagger:dagger:2.48.1")
+implementation("com.google.dagger:dagger-android-support:2.49")
+kapt("com.google.dagger:dagger-compiler:2.49")
+kapt("com.google.dagger:dagger-android-processor:2.49")
+
+implementation("androidx.security:security-crypto:1.0.0")
+```
+
 In order to use the DID libraries it is required to change the minimum version of the DID libraries, Change minSdkVersion to 23 in you android/app/build.gradle:
 
-```
- defaultConfig {       
+__groovy__
+```groovy
+ defaultConfig {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 23
         ...
     }
 ```
+
+__kotlin__
+```kotlin
+ defaultConfig {
+        minSdk 23
+        ...
+    }
+```
+
+### Add Proguard Rules
+
+ProGuard optimizes, shrinks, and obfuscates Android app code. It removes unused classes, methods, and attributes, then shortens names to make reverse engineering harder—especially for apps with sensitive features like license checks. To ensure compatibility with the DetectID is required to add the following rules to `proguard-rules.pro` file.
+
+```
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepattributes Exceptions
+-keepattributes InnerClasses
+-keepattributes SourceFile,LineNumberTable
+
+-dontwarn sun.misc.**
+
+-keep class * extends com.google.gson.TypeAdapter
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
+
+-keepclassmembers,allowobfuscation class * {
+  @com.google.gson.annotations.SerializedName <fields>;
+}
+-keep,allowobfuscation,allowshrinking class com.google.gson.reflect.TypeToken
+-keep,allowobfuscation,allowshrinking class * extends com.google.gson.reflect.TypeToken
+
+-keep class com.appgate.** {
+    @com.google.gson.annotations.SerializedName <fields>;
+   <init>();
+}
+-keep class com.appgate.appgate_sdk.data.device.repository.SdkContainer {
+    <fields>;
+}
+-keep class com.appgate.didsdk.constants.model.** { *; }
+-keepclassmembers class com.appgate.didsdk.constants.model.** { *; }
+-keepnames class com.appgate.didsdk.constants.model.** { *; }
+-keepclassmembernames class com.appgate.didsdk.constants.model.** { *; }
+```
+
 <a name="troubleshooting-android"></a>
 ### Troubleshooting
 
@@ -859,7 +924,7 @@ Go to `yourapp/android/app/kotlin or java/yourpackage/MainActivity` and change t
 
 From:
 
-```Kotlin
+```kotlin
 import io.flutter.embedding.android.FlutterActivity
         
 class MainActivity: FlutterActivity() {}
@@ -867,7 +932,7 @@ class MainActivity: FlutterActivity() {}
 
 To:
 
-```Kotlin
+```kotlin
 import com.appgate.didsdk.DIDMainActivity
 
 class MainActivity : DIDMainActivity() {}
@@ -877,10 +942,25 @@ class MainActivity : DIDMainActivity() {}
 
 In your app go to android/build.gradle
 
-```
-  dependencies {
+__groovy__
+```groovy
+    dependencies {
         classpath 'com.google.gms:google-services:4.3.15'
-  }
+    }
+```
+
+__kotlin__
+```kotlin
+buildscript {
+    repositories {
+        ...
+        google()
+    }
+    dependencies {
+        ...
+        classpath("com.google.gms:google-services:4.4.0")
+    }
+}
 ```
 
 In your app go to android/app/build.gradle and initial block add this line:
@@ -893,8 +973,14 @@ apply plugin: 'com.google.gms.google-services'
 
 Then, in your dependencies block to build.gradle add this line:
 
+__groovy__
+```groovy
+implementation 'com.google.firebase:firebase-messaging:24.0.0'
 ```
-implementation 'com.google.firebase:firebase-messaging:23.1.2'
+
+__kotlin__
+```kotlin
+implementation("com.google.firebase:firebase-messaging:24.0.0")
 ```
 
 Add your google-service.json to android/app/
@@ -903,7 +989,7 @@ Add your google-service.json to android/app/
 
 Create a service class that extends FirebaseMessagingService  and override the following methods:
 
-``` kotlin
+```kotlin
 import com.appgate.appgate_sdk.data.device.provider.PushNotificationProvider
 import com.appgate.didsdk.DIDFCMService
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -940,7 +1026,7 @@ in your app go to AndroidManifest.xml declare you service firebase, here is an e
 
 Add to your MainActivity to override the getTokenFirebase method to update the token on application startup.
 
-```Kotlin
+```kotlin
 import android.text.TextUtils
 import com.appgate.appgate_sdk.data.device.provider.PushNotificationProvider
 import com.appgate.didm_auth.DetectID
@@ -976,11 +1062,12 @@ Configure the Maven address of and build dependencies for the AppGallery Connect
 In your app go to android/build.gradle
 
 ![img.png](img/push3.png)
-```
+__groovy__
+```groovy
 allprojects {
     repositories {
-            // Add the Maven address.
-            maven {url 'https://developer.huawei.com/repo/'}
+        // Add the Maven address.
+        maven {url 'https://developer.huawei.com/repo/'}
     }
 }
 ...
@@ -991,7 +1078,23 @@ buildscript{
     }
     dependencies {
         // Add dependencies.
-        classpath 'com.huawei.agconnect:agcp:1.5.2.300'
+        classpath 'com.huawei.agconnect:agcp:1.9.1.300'
+    }
+}
+```
+
+__kotlin__
+```kotlin
+buildscript {
+    repositories {
+        ...
+        maven {
+            url = uri("https://developer.huawei.com/repo/")
+        }
+    }
+    dependencies {
+        ...
+        classpath("com.huawei.agconnect:agcp:1.9.1.300")
     }
 }
 ```
@@ -1000,14 +1103,33 @@ Then go to android/app/build.gradle and initial block add this line:
 
 ![android2.png](img/android2.png)
 
-```
+__groovy__
+```groovy
 apply plugin: 'com.huawei.agconnect'
+```
+
+__kotlin__
+```kotlin
+plugins {
+    id("com.huawei.agconnect")
+}
 ```
 
 In your dependencies block to build.gradle add this line:
 
-```
+__groovy__
+```groovy
+implementation 'com.huawei.hms:push:6.3.0.304'
 implementation 'com.huawei.agconnect:agconnect-core:1.5.2.300'
+```
+
+__kotlin__
+```kotlin
+dependencies {
+    ...
+    implementation("com.huawei.hms:push:6.3.0.304")
+    implementation("com.huawei.agconnect:agconnect-core:1.5.2.300")
+}
 ```
 
 Add your agconnect-services.json to android/app/
@@ -1016,7 +1138,7 @@ Add your agconnect-services.json to android/app/
 
 You can create a service class that extends HmsMessageService  and override the following methods:
 
-``` kotlin
+```kotlin
 import com.appgate.appgate_sdk.data.device.provider.PushNotificationProvider
 import com.appgate.didsdk.DIDFCMService
 import com.huawei.hms.push.HmsMessageService
@@ -1051,7 +1173,7 @@ Then in your app go to AndroidManifest.xml declare you service firebase, here is
 ```
 Add to your MainActivity to override the getTokenHMS method to update the token on application startup.
 
-```Kotlin
+```kotlin
 
 import android.text.TextUtils
 import android.util.Log

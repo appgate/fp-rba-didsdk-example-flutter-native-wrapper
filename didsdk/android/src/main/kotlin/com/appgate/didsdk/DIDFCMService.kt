@@ -22,20 +22,19 @@ class DIDFCMService(private val context: Context) {
 
     fun onMessageReceived(data: Map<String, String>) {
         if (data.isNotEmpty() && DetectID.sdk(context).isValidPayload(data)) {
-            DetectID.sdk(context).pushApi.setPushAlertReceivedListener {
+            DetectID.sdk(context).getPushApi().setPushAlertReceivedListener {
                 clearNotification(context, getNotificationId(it))
                 Handler(Looper.getMainLooper()).postDelayed({
                     prepareFlutterNotificationFromDID(it, 0, context)
                 }, 100)
             }
-            DetectID.sdk(context).pushApi.setPushTransactionReceivedListener {
+            DetectID.sdk(context).getPushApi().setPushTransactionReceivedListener {
                 clearNotification(context, getNotificationId(it))
                 Handler(Looper.getMainLooper()).postDelayed({
                     prepareFlutterNotificationFromDID(it, 1, context)
                 }, 100)
             }
             DetectID.sdk(context).subscribePayload(data)
-//            clearNotification(context)
         }
     }
 

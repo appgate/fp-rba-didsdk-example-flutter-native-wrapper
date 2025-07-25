@@ -7,7 +7,6 @@ enum _AccountAttributes {
   activePushAuth,
   activeQRAuth,
   activePushAlert,
-  activeVoiceAuth,
   activeFaceAuth,
   registrationDate,
   activationURL,
@@ -25,7 +24,6 @@ class Account {
   final bool activePushAuth;
   final bool activeQRAuth;
   final bool activePushAlert;
-  final bool activeVoiceAuth;
   final bool activeFaceAuth;
 
   Account._(
@@ -38,7 +36,6 @@ class Account {
       this.activePushAuth,
       this.activeQRAuth,
       this.activePushAlert,
-      this.activeVoiceAuth,
       this.activeFaceAuth,
   );
 
@@ -49,7 +46,6 @@ class Account {
     _AccountAttributes.activePushAuth.name: activePushAuth,
     _AccountAttributes.activeQRAuth.name: activeQRAuth,
     _AccountAttributes.activePushAlert.name: activePushAlert,
-    _AccountAttributes.activeVoiceAuth.name: activeVoiceAuth,
     _AccountAttributes.activeFaceAuth.name: activeFaceAuth,
     _AccountAttributes.registrationDate.name: registrationDate,
     _AccountAttributes.activationURL.name: activationURL,
@@ -67,7 +63,6 @@ class Account {
       _JsonMapper._getBool(map, _AccountAttributes.activePushAuth.name),
       _JsonMapper._getBool(map, _AccountAttributes.activeQRAuth.name),
       _JsonMapper._getBool(map, _AccountAttributes.activePushAlert.name),
-      _JsonMapper._getBool(map, _AccountAttributes.activeVoiceAuth.name),
       _JsonMapper._getBool(map, _AccountAttributes.activeFaceAuth.name),
     );
   }

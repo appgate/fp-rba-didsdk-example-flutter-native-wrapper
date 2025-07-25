@@ -99,46 +99,24 @@ class PushAPI {
     return completer.future;
   }
 
-  Future confirmPushTransactionAction(TransactionInfo transaction) {
-    pushTransactionServerResponseStream = StreamController();
-    Completer completer = Completer();
-    Future.delayed(const Duration(milliseconds: 1), () {
-      channel.invokeListMethod(
-          MethodNames.confirmPushTransactionAction.name, {
-        _QRAuthenticationConstants.transaction.name: json.encode(
-            transaction.toJson())
-      }).then((_) {});
-    });
-    pushTransactionServerResponseStream?.stream
-        .take(1).listen((response) {
-      if (response == _PushAPIConstants.success) {
-        completer.complete();
-      } else {
-        completer.completeError(AppgateSDKError(code: response));
-      }
-    });
-    return completer.future;
+  Future<void> confirmPushTransactionAction(TransactionInfo transaction) {
+    return channel.invokeListMethod(
+        MethodNames.confirmPushTransactionAction.name, {
+      _QRAuthenticationConstants.transaction.name: json.encode(
+          transaction.toJson())
+    })
+    .then((_) => Future.value())
+    .catchError((error) => Future.error(AppgateSDKError.toError(error)));
   }
 
-  Future declinePushTransactionAction(TransactionInfo transaction) {
-    pushTransactionServerResponseStream = StreamController();
-    Completer completer = Completer();
-    Future.delayed(const Duration(milliseconds: 1), () {
-      channel.invokeListMethod(
-          MethodNames.declinePushTransactionAction.name, {
-        _QRAuthenticationConstants.transaction.name: json.encode(
-            transaction.toJson())
-      }).then((_) {});
-    });
-    pushTransactionServerResponseStream?.stream
-        .take(1).listen((response) {
-      if (response == _PushAPIConstants.success) {
-        completer.complete();
-      } else {
-        completer.completeError(AppgateSDKError(code: response));
-      }
-    });
-    return completer.future;
+  Future<void> declinePushTransactionAction(TransactionInfo transaction) {
+    return channel.invokeListMethod(
+        MethodNames.declinePushTransactionAction.name, {
+      _QRAuthenticationConstants.transaction.name: json.encode(
+          transaction.toJson())
+    })
+    .then((_) => Future.value())
+    .catchError((error) => Future.error(AppgateSDKError.toError(error)));
   }
 
   void approvePushAlertAction(TransactionInfo transaction) {

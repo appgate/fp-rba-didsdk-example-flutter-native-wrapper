@@ -1,10 +1,17 @@
 package com.appgate.didsdk.modules
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import com.appgate.appgate_sdk.data.utils.GsonUtil
+import com.appgate.appgate_sdk.encryptor.exceptions.SDKException
 import com.appgate.didm_auth.DetectID
 import com.appgate.didm_auth.common.account.entities.Account
-import com.appgate.didm_auth.qr.listener.QRCodeTransactionServerResponseListener
+import com.appgate.didm_auth.common.handler.QrAuthenticationResultHandler
+import com.appgate.didm_auth.common.handler.TransactionResultHandler
+import com.appgate.didm_auth.common.transaction.TransactionInfo
+import com.appgate.didsdk.DidsdkPlugin
 import com.appgate.didsdk.constants.ArgumentsConstants
 import com.appgate.didsdk.constants.SDKErrors
 import com.appgate.didsdk.constants.mapper.TransactionInfoMapper
@@ -14,6 +21,8 @@ import io.flutter.plugin.common.MethodChannel
 
 class QRModule(context: Context?) {
     private var sdk: DetectID = DetectID.sdk(context)
+    private val handler = Handler(Looper.getMainLooper())
+
     fun qrAuthenticationProcess(call: MethodCall, result: MethodChannel.Result) {
 
         val accountJson = call.argument<String>(ArgumentsConstants.ACCOUNT.value)
@@ -26,33 +35,22 @@ class QRModule(context: Context?) {
                 SDKErrors.ERROR_NOT_ARGUMENTS.details
             )
 
-
-        sdk.qrApi.setQRCodeScanTransactionListener {
-            if (it != null) {
-                val value: MutableList<String> = ArrayList(1)
-                value.add(GsonUtil.toJson(TransactionInfoMapper().mapFromModelSDK(it)))
-                result.success(value)
-            } else {
-                result.error(
-                    SDKErrors.DEFAULT_ERROR.code,
-                    SDKErrors.DEFAULT_ERROR.message,
-                    SDKErrors.DEFAULT_ERROR.details
-                )
+        val qrAuthHandler = object : QrAuthenticationResultHandler {
+            override fun onSuccess(transactionInfo: TransactionInfo) {
+                handler.post {
+                    val value: MutableList<String> = ArrayList(1)
+                    value.add(GsonUtil.toJson(TransactionInfoMapper().mapFromModelSDK(transactionInfo)))
+                    result.success(value)
+                }
+            }
+            override fun onFailure(exception: SDKException) {
+                handler.post {
+                    Log.e(TAG, "onFailure: ", exception)
+                    result.error("${exception.code}", exception.message, exception.localizedMessage)
+                }
             }
         }
-
-        val listener = QRCodeTransactionServerResponseListener { data: String ->
-            if (data != CODE_SUCCESSFUL) {
-                result.error(
-                    SDKErrors.DEFAULT_ERROR.code,
-                    SDKErrors.DEFAULT_ERROR.message,
-                    SDKErrors.DEFAULT_ERROR.details
-                )
-
-            }
-        }
-        sdk.qrApi.setQRCodeTransactionServerResponseListener(listener)
-        sdk.qrApi.qrAuthenticationProcess(account, code)
+        sdk.qrApi.qrAuthenticationProcess(account, code, qrAuthHandler)
     }
 
     fun confirmOrDecline(confirm: Boolean, call: MethodCall, result: MethodChannel.Result) {
@@ -68,31 +66,38 @@ class QRModule(context: Context?) {
             GsonUtil.fromJson(transaction, TransactionInfoDomain::class.java)
         val transactionInfo = TransactionInfoMapper().mapToModelSDK(transactionInfoDomain)
 
-        val listener = QRCodeTransactionServerResponseListener {
-            if (it == CODE_SUCCESSFUL) {
+        val transactionResultHandler = object : TransactionResultHandler {
+            override fun onSuccess() {
+                Log.d(TAG, "onSuccess()")
                 val value: MutableList<String> = ArrayList(1)
                 value.add("")
                 result.success(value)
-            } else {
-                result.error(it, "", null)
+            }
+
+            override fun onFailure(exception: SDKException) {
+                Log.e(TAG, "onFailure: ", exception)
+                result.error("${exception.code}", exception.message, exception.localizedMessage)
             }
         }
-        sdk.qrApi.setQRCodeTransactionServerResponseListener(listener)
 
         when (confirm) {
             true -> {
-                sdk.qrApi.confirmQRCodeTransactionAction(transactionInfo)
+                sdk.qrApi.confirmQRCodeTransactionAction(
+                    transactionInfo,
+                    transactionResultHandler
+                )
             }
-
             else -> {
-                sdk.qrApi.declineQRCodeTransactionAction(transactionInfo)
+                sdk.qrApi.declineQRCodeTransactionAction(
+                    transactionInfo,
+                    transactionResultHandler
+                )
             }
         }
-
-
     }
 
     companion object {
+        private var TAG = DidsdkPlugin::class.java.simpleName
         const val CODE_SUCCESSFUL = "1020"
     }
 }
