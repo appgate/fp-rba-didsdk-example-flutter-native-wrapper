@@ -17,7 +17,6 @@ enum class DIDModulesNames(val value: String) {
     SET_APPLICATION_NAME("setApplicationName"),
     REMOVE_ACCOUNT("removeAccount"),
     UPDATE_GLOBAL_CONFIG("updateGlobalConfig"),
-    GET_DEVICE_ID("getDeviceID"),
     GET_MASKED_APP_INSTANCE_ID("getMaskedAppInstanceID"),
     GET_MOBILE_ID("getMobileID"),
     GET_TOKEN_VALUE("getTokenValue"),

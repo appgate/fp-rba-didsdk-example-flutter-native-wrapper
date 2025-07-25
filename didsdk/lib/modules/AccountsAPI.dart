@@ -14,7 +14,7 @@ class AccountsAPI {
     return channel.invokeListMethod(
         MethodNames.existAccounts.name, {}).then((response) {
       if ((response?.isNotEmpty ?? false) && response!.first is bool) {
-        bool value = response!.first;
+        bool value = response.first;
         return Future.value(value);
       }
       return Future.value(false);
